@@ -17,6 +17,7 @@ namespace adoptPetAPI.Models
 
         [MaxLength(250)]
         public string? Description { get; set; }
+
         public int? IdUser { get; set; }
 
         [ForeignKey("IdUser")]

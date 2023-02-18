@@ -1,20 +1,20 @@
 ﻿namespace adoptPetAPI.Models
 {
-    public class UserApiResponse
+    public class PetApiResponse
     {
-        public List<UserResult> results { get; set; }
+        public List<PetResult> results { get; set; }
         public string status { get; set; }
     }
 
-    public class UserResult
+    public class PetResult
     {
-        public UserName name { get; set; }
+        public PetName name { get; set; }
     }
 
-    public class UserName
+    public class PetName
     {
         public string first { get; set; }
-        public string last { get; set; }
+      
     }
 
 }

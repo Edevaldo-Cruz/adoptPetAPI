@@ -1,83 +1,91 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using adoptPetAPI.Context;
+using adoptPetAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace adoptPetAPI.Controllers
 {
+    [ApiController]
+    [Route("Controller")]
     public class UserController : Controller
     {
-        // GET: UserController
-        public ActionResult Index()
+        private readonly AdoptPetContext _context;
+
+        public UserController(AdoptPetContext context)
         {
-            return View();
+            _context = context;
         }
 
-        // GET: UserController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: UserController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: UserController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult Create(User user)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _context.Add(user);
+            _context.SaveChanges();
+            return Ok(user);
         }
 
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet("GetAllUsers")]
+        public IActionResult GetAllUsers()
         {
-            return View();
+            var urses = _context.Users;
+            return Ok(urses);
         }
 
-        // POST: UserController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpGet("GetUserById")]
+        public IActionResult GetById(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var user = _context.Users.Find(id);
+
+            if(user == null)
+                return NotFound();
+
+            return Ok(user);
         }
 
-        // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        [HttpGet("GetUserByName")]
+        public IActionResult GetByName(string name)
         {
-            return View();
+            var user = _context.Users.Where(x => x.Name.Contains(name));
+            return Ok(user);
         }
 
-        // POST: UserController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpPut("{id}")]
+        public IActionResult Edit(int id, User user)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var userBank = _context.Users.Find(id);
+
+            if (user == null)
+                return NotFound();
+
+            userBank.Name = user.Name;
+            userBank.DateOfBirth = user.DateOfBirth;
+            userBank.Password = user.Password;
+            userBank.Email = user.Email;
+            userBank.Address = user.Address;
+            userBank.Telephone = user.Telephone;
+
+            _context.Users.Update(userBank);
+            _context.SaveChanges();
+
+            return Ok(userBank);
+
         }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var userBank = _context.Users.Find(id);
+
+            if (userBank == null)
+                return NotFound();
+
+            _context.Users.Remove(userBank);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+
     }
 }
+

@@ -19,14 +19,6 @@ namespace adoptPetAPI.Controllers
             _context = context;
         }
 
-        //[HttpPost]
-        //public IActionResult Create(Pet pet)
-        //{
-        //    _context.Add(pet);
-        //    _context.SaveChanges();
-        //    return Ok(pet);
-        //}
-
         [HttpPost]
         public async Task<IActionResult> Create()
         {
@@ -38,14 +30,14 @@ namespace adoptPetAPI.Controllers
                 var dogPhotoUrl = dogData.message;
 
                 // Obter nome aleatório
-                var userResponse = await httpClient.GetStringAsync("https://randomuser.me/api/?nat=br");
-                var userData = JsonConvert.DeserializeObject<UserApiResponse>(userResponse);
-                var userFirstName = userData.results[0].name.first;
+                var PetResponse = await httpClient.GetStringAsync("https://randomuser.me/api/?nat=br");
+                var PetData = JsonConvert.DeserializeObject<PetApiResponse>(PetResponse);
+                var PetFirstName = PetData.results[0].name.first;
 
                 // Criar novo pet
                 var newPet = new Pet
                 {
-                    Name = userFirstName,
+                    Name = PetFirstName,
                     Image = dogPhotoUrl
                 };
                 _context.Add(newPet);
@@ -53,42 +45,6 @@ namespace adoptPetAPI.Controllers
                 return Ok(newPet);
             }
         }
-
-
-        //[HttpPost("AddIfNeeded")]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-        //public async Task<IActionResult> AddPetsIfNeeded()
-        //{
-        //    using (var context = new AdoptPetContext())
-        //    {
-        //        int currentCount = context.Pets.Count(p => !string.IsNullOrEmpty(p.Human));
-        //        if (currentCount < 10)
-        //        {
-        //            var httpClient = new HttpClient();
-
-        //            // Obter foto aleatória de cachorro
-        //            var dogResponse = await httpClient.GetStringAsync("https://dog.ceo/api/breeds/image/random");
-        //            var dogData = JsonConvert.DeserializeObject<DogApiResponse>(dogResponse);
-        //            var dogPhotoUrl = dogData.message;
-
-        //            // Obter nome aleatório
-        //            var userResponse = await httpClient.GetStringAsync("https://randomuser.me/api/?nat=br");
-        //            var userData = JsonConvert.DeserializeObject<UserApiResponse>(userResponse);
-        //            var userFirstName = userData.results[0].name.first;
-
-        //            // Criar novo pet
-        //            var newPet = new Pet
-        //            {
-        //                Name = userFirstName,
-        //                Image = dogPhotoUrl
-        //            };
-        //            context.Pets.Add(newPet);
-        //            await context.SaveChangesAsync();
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
 
 
         [HttpPut("{id}")]
@@ -108,6 +64,13 @@ namespace adoptPetAPI.Controllers
             _context.SaveChanges();
 
             return Ok(petBank);
+        }
+
+        [HttpGet("GetAllPets")]
+        public IActionResult GetAllPets()
+        {
+            var pets = _context.Pets;
+            return Ok(pets);
         }
 
         [HttpDelete]
