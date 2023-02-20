@@ -1,0 +1,27 @@
+﻿version: 0.2
+
+env:
+    variables:
+        PROJECT: api-adopt-master
+
+phases:
+  pre_build:
+    commands:
+      - echo Restoring started on 'date'
+      - dotnet restore
+  build:
+    commands:
+      - echo Building started on 'date'
+      - dotnet build -c Release     
+      - dotnet test -c Release --logger trx --results-directory ./testresults
+  post_build:
+    commands:
+      - echo Publish started on 'date'
+      - dotnet publish -c Release -r linux-64x -o ./build_output ./${PROJECT}/${PROJECT}.Api.csproj --self-contained false
+
+
+    artifacts:
+        files:
+            - '**/**'
+        base-directory: ./build_output
+        discard-paths: no
