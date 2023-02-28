@@ -14,6 +14,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//autorização de acesso
+app.UseCors(builder => builder
+    .WithOrigins("http://localhost:3000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -28,3 +35,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

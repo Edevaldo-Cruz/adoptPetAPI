@@ -47,10 +47,10 @@ namespace adoptPetAPI.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public IActionResult Edit(int id, Pet pet)
+        [HttpPut("{IdPet}")]
+        public IActionResult Edit(int IdPet, Pet pet)
         {
-            var petBank = _context.Pets.Find(id);
+            var petBank = _context.Pets.Find(IdPet);
 
             if (petBank == null)
                 return NotFound();
@@ -66,12 +66,37 @@ namespace adoptPetAPI.Controllers
             return Ok(petBank);
         }
 
+        [HttpPatch("Adoption/{IdPet}")]
+        public IActionResult Adoption(int IdPet, int IdUser)
+        {
+            var petBank = _context.Pets.Find(IdPet);
+           
+            if (petBank == null)
+                return NotFound();
+
+            petBank.IdUser = IdUser;
+
+            _context.Pets.Update(petBank);
+            _context.SaveChanges();
+
+            return Ok(petBank);
+            
+        }
+
         [HttpGet("GetAllPets")]
         public IActionResult GetAllPets()
         {
             var pets = _context.Pets;
             return Ok(pets);
         }
+
+        [HttpGet("GetAdoptionAvailable")]
+        public IActionResult GetAdoptionAvailable()
+        {
+            var pets = _context.Pets.Where(x => x.IdUser == null);
+            return Ok(pets);
+        }
+
 
         [HttpDelete]
         public IActionResult Delete(int id)
